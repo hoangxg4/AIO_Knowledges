@@ -1,0 +1,40 @@
+name: Multi-Platform Docs Factory
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    paths:
+      - 'source.txt'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install gitingest
+
+      - name: Run Multi-Platform Ingest
+        env:
+          # Truyền tất cả token vào môi trường
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          BITBUCKET_TOKEN: ${{ secrets.BITBUCKET_TOKEN }}
+        run: python ingest_docs.py
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "Docs-Factory-Bot"
+          git config --global user.email "docs-bot@ai.com"
+          git add consolidated-docs/*.md
+          git commit -m "Update Multi-platform Docs: $(date +'%Y-%m-%d')" || echo "No changes"
+          git push
