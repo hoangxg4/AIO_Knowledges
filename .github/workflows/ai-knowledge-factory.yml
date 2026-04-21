@@ -1,0 +1,35 @@
+name: AI Knowledge Factory
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Chạy tự động 12h đêm hàng ngày
+  push:
+    paths:
+      - 'source.txt'   # Chạy ngay khi bạn sửa danh sách repo
+  workflow_dispatch:   # Cho phép chạy thủ công bằng nút bấm
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install GitIngest
+        run: pip install gitingest
+
+      - name: Run Factory
+        run: python ingest_factory.py
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "AI-Factory-Bot"
+          git config --global user.email "bot@ai-docs.com"
+          git add consolidated-docs/*.md SUMMARY.md
+          git commit -m "Update AI Knowledge: $(date +'%Y-%m-%d')" || echo "No changes to commit"
+          git push
