@@ -1,6 +1,6 @@
 # 📚 AI Knowledge Base Index
 
-**Cập nhật:** 22/05/2026 02:45:27
+**Cập nhật:** 23/05/2026 02:30:57
 
 | Dự án | Nguồn Gốc | File Digest (Tối ưu cho AI) |
 | :--- | :--- | :--- |
